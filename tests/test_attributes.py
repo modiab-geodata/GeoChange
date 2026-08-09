@@ -9,10 +9,10 @@ path_new = Path("data/input/iris.geojson")
 
 gdf_old = load_file(path_old)
 gdf_new = load_file(path_new)
-# Modification volontaire pour tester
+
+# Modification pour tester la fonction
 
 gdf_new.loc[gdf_old.index[0], "nom_iris"] = "TEST MODIFICATION"
-
 
 
 resultat = modifications_valeurs(

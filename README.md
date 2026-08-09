@@ -1,5 +1,4 @@
-\# 🌍 GeoChange
-
+\# GeoChange
 
 
 > \*\*GeoChange\*\* est un moteur Python de comparaison de données géographiques permettant de détecter automatiquement les différences entre deux versions d'un même jeu de données vectoriel.
@@ -60,9 +59,13 @@ GeoChange automatise entièrement ce processus.
 
 
 
-\# Objectifs de ce projet
+\# Objectifs
+
+
 
 GeoChange permet de comparer automatiquement deux versions d'un même jeu de données géographique afin de :
+
+
 
 \* détecter les nouvelles entités ;
 
@@ -79,7 +82,9 @@ GeoChange permet de comparer automatiquement deux versions d'un même jeu de don
 \* exporter les résultats dans plusieurs formats SIG.
 
 
+
 \---
+
 
 
 \# Cas d'utilisation
@@ -221,9 +226,30 @@ Comparer deux extractions OSM afin de détecter les évolutions.
 
 Détection automatique des modifications de valeurs.
 
+
+
+Exemple :
+
+
+
+| ID  | Champ | Ancienne valeur | Nouvelle valeur |
+
+| --- | ----- | --------------- | --------------- |
+
+| 154 | nom   | Paris           | Paris Centre    |
+
+
+
+\---
+
+
+
 \## Comparaison géométrique
 
+
+
 Détection automatique :
+
 
 
 \* géométries modifiées ;
@@ -235,7 +261,9 @@ Détection automatique :
 \* déplacement du centroïde.
 
 
+
 \---
+
 
 
 \## Statistiques
@@ -289,6 +317,8 @@ Génération automatique :
 \# Architecture du projet
 
 
+
+```text
 
 GeoChange/
 
@@ -354,6 +384,8 @@ GeoChange/
 
 └── examples/
 
+```
+
 
 
 \---
@@ -363,24 +395,64 @@ GeoChange/
 \# Workflow
 
 
+
+```text
+
 Lecture
+
+&#x20;   │
+
+&#x20;   ▼
 
 Validation
 
+&#x20;   │
+
+&#x20;   ▼
+
 Comparaison de structure
+
+&#x20;   │
+
+&#x20;   ▼
 
 Comparaison des entités
 
+&#x20;   │
+
+&#x20;   ▼
+
 Comparaison des attributs
+
+&#x20;   │
+
+&#x20;   ▼
 
 Comparaison géométrique
 
+&#x20;   │
+
+&#x20;   ▼
+
 Statistiques
+
+&#x20;   │
+
+&#x20;   ▼
 
 Rapport
 
+&#x20;   │
+
+&#x20;   ▼
 
 Export
+
+```
+
+
+
+\---
 
 
 
@@ -438,7 +510,11 @@ output:
 
 Aucune modification du code n'est nécessaire pour comparer un nouveau jeu de données.
 
+
+
 \---
+
+
 
 \# Installation
 
@@ -547,77 +623,6 @@ output/
 \---
 
 
-
-\# Roadmap
-
-
-
-\## Version 1
-
-
-
-\* Lecture des données
-
-\* Validation
-
-\* Comparaison de structure
-
-
-
-\## Version 2
-
-
-
-\* Détection des ajouts
-
-\* Détection des suppressions
-
-
-
-\## Version 3
-
-
-
-\* Comparaison des attributs
-
-
-
-\## Version 4
-
-
-
-\* Comparaison des géométries
-
-
-
-\## Version 5
-
-
-
-\* Génération de statistiques
-
-
-
-\## Version 6
-
-
-
-\* Rapport HTML
-
-
-
-\## Version 7
-
-
-
-\* Interface en ligne de commande (CLI)
-
-
-
-\## Version 8
-
-
-
 \* Package Python installable
 
 
@@ -626,7 +631,7 @@ output/
 
 
 
-\# 🛠 Technologies
+\# Stack technique  
 
 
 
