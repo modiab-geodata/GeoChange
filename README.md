@@ -14,7 +14,7 @@ Le projet est conçu pour fonctionner avec \*\*n'importe quelle couche SIG\*\* (
 
 
 
-\# 🚀 Pourquoi GeoChange ?
+\# Pourquoi GeoChange ?
 
 
 
@@ -60,13 +60,9 @@ GeoChange automatise entièrement ce processus.
 
 
 
-\# 🎯 Objectifs
-
-
+\# Objectifs de ce projet
 
 GeoChange permet de comparer automatiquement deux versions d'un même jeu de données géographique afin de :
-
-
 
 \* détecter les nouvelles entités ;
 
@@ -83,12 +79,10 @@ GeoChange permet de comparer automatiquement deux versions d'un même jeu de don
 \* exporter les résultats dans plusieurs formats SIG.
 
 
-
 \---
 
 
-
-\# 📌 Cas d'utilisation
+\# Cas d'utilisation
 
 
 
@@ -96,7 +90,7 @@ GeoChange est générique et peut être utilisé dans de nombreux contextes.
 
 
 
-\## 🏛 Administration
+\## Administration
 
 
 
@@ -104,7 +98,7 @@ Comparer deux versions des limites administratives.
 
 
 
-\## 🏗 Urbanisme
+\## Urbanisme
 
 
 
@@ -112,7 +106,7 @@ Comparer deux versions du cadastre ou des bâtiments.
 
 
 
-\## ⚡ Réseaux
+\## Réseaux
 
 
 
@@ -120,7 +114,7 @@ Comparer deux versions d'un réseau électrique, gaz ou télécom.
 
 
 
-\## 🚲 Mobilité
+\## Mobilité
 
 
 
@@ -128,7 +122,7 @@ Comparer deux versions d'un réseau cyclable ou des stations Vélib.
 
 
 
-\## 🌳 Environnement
+\## Environnement
 
 
 
@@ -136,7 +130,7 @@ Comparer des inventaires forestiers ou des zones naturelles.
 
 
 
-\## 🗺 OpenStreetMap
+\## OpenStreetMap
 
 
 
@@ -148,7 +142,7 @@ Comparer deux extractions OSM afin de détecter les évolutions.
 
 
 
-\# ✨ Fonctionnalités
+\# Fonctionnalités
 
 
 
@@ -161,11 +155,6 @@ Comparer deux extractions OSM afin de détecter les évolutions.
 \* GeoJSON
 
 \* Shapefile
-
-\* Parquet
-
-\* Tous les formats supportés par GeoPandas
-
 
 
 \---
@@ -232,30 +221,9 @@ Comparer deux extractions OSM afin de détecter les évolutions.
 
 Détection automatique des modifications de valeurs.
 
-
-
-Exemple :
-
-
-
-| ID  | Champ | Ancienne valeur | Nouvelle valeur |
-
-| --- | ----- | --------------- | --------------- |
-
-| 154 | nom   | Paris           | Paris Centre    |
-
-
-
-\---
-
-
-
 \## Comparaison géométrique
 
-
-
 Détection automatique :
-
 
 
 \* géométries modifiées ;
@@ -267,9 +235,7 @@ Détection automatique :
 \* déplacement du centroïde.
 
 
-
 \---
-
 
 
 \## Statistiques
@@ -320,11 +286,9 @@ Génération automatique :
 
 
 
-\# 🏗 Architecture du projet
+\# Architecture du projet
 
 
-
-```text
 
 GeoChange/
 
@@ -390,79 +354,37 @@ GeoChange/
 
 └── examples/
 
-```
-
 
 
 \---
 
 
 
-\# ⚙️ Workflow
+\# Workflow
 
-
-
-```text
 
 Lecture
 
-&#x20;   │
-
-&#x20;   ▼
-
 Validation
-
-&#x20;   │
-
-&#x20;   ▼
 
 Comparaison de structure
 
-&#x20;   │
-
-&#x20;   ▼
-
 Comparaison des entités
-
-&#x20;   │
-
-&#x20;   ▼
 
 Comparaison des attributs
 
-&#x20;   │
-
-&#x20;   ▼
-
 Comparaison géométrique
-
-&#x20;   │
-
-&#x20;   ▼
 
 Statistiques
 
-&#x20;   │
-
-&#x20;   ▼
-
 Rapport
 
-&#x20;   │
-
-&#x20;   ▼
 
 Export
 
-```
 
 
-
-\---
-
-
-
-\# ⚙️ Configuration
+\# Configuration
 
 
 
@@ -516,13 +438,9 @@ output:
 
 Aucune modification du code n'est nécessaire pour comparer un nouveau jeu de données.
 
-
-
 \---
 
-
-
-\# 📦 Installation
+\# Installation
 
 
 
@@ -574,7 +492,7 @@ pip install -r requirements.txt
 
 
 
-\# ▶️ Utilisation
+\# Utilisation
 
 
 
@@ -594,7 +512,7 @@ python -m geochange compare config/compare.yaml
 
 
 
-\# 📊 Résultats générés
+\# Résultats générés
 
 
 
@@ -630,7 +548,7 @@ output/
 
 
 
-\# 🛣 Roadmap
+\# Roadmap
 
 
 
@@ -738,7 +656,7 @@ output/
 
 
 
-\# 🤝 Contributions
+\# Contributions
 
 
 
@@ -754,7 +672,7 @@ N'hésitez pas à ouvrir une \*Issue\* ou une \*Pull Request\* afin de proposer 
 
 
 
-\# 📄 Licence
+\# Licence
 
 
 
