@@ -251,7 +251,6 @@ Exemple :
 Détection automatique :
 
 
-
 \* géométries modifiées ;
 
 \* surfaces modifiées ;
@@ -260,19 +259,13 @@ Détection automatique :
 
 \* déplacement du centroïde.
 
-
-
 \---
-
 
 
 \## Statistiques
 
 
-
 Production automatique de statistiques :
-
-
 
 \* nombre d'entités ;
 
@@ -287,9 +280,7 @@ Production automatique de statistiques :
 \* évolution des longueurs.
 
 
-
 \---
-
 
 
 \## Rapports
@@ -386,134 +377,7 @@ GeoChange/
 
 ```
 
-
-
 \---
-
-
-
-\# Workflow
-
-
-
-```text
-
-Lecture
-
-&#x20;   │
-
-&#x20;   ▼
-
-Validation
-
-&#x20;   │
-
-&#x20;   ▼
-
-Comparaison de structure
-
-&#x20;   │
-
-&#x20;   ▼
-
-Comparaison des entités
-
-&#x20;   │
-
-&#x20;   ▼
-
-Comparaison des attributs
-
-&#x20;   │
-
-&#x20;   ▼
-
-Comparaison géométrique
-
-&#x20;   │
-
-&#x20;   ▼
-
-Statistiques
-
-&#x20;   │
-
-&#x20;   ▼
-
-Rapport
-
-&#x20;   │
-
-&#x20;   ▼
-
-Export
-
-```
-
-
-
-\---
-
-
-
-\# Configuration
-
-
-
-GeoChange est piloté par un fichier YAML.
-
-
-
-Exemple :
-
-
-
-```yaml
-
-input:
-
-&#x20; old: data/old.gpkg
-
-&#x20; new: data/new.gpkg
-
-
-
-primary\_key: id
-
-
-
-compare:
-
-&#x20; structure: true
-
-&#x20; attributes: true
-
-&#x20; geometry: true
-
-
-
-output:
-
-&#x20; folder: output
-
-&#x20; formats:
-
-&#x20;   - html
-
-&#x20;   - gpkg
-
-&#x20;   - csv
-
-```
-
-
-
-Aucune modification du code n'est nécessaire pour comparer un nouveau jeu de données.
-
-
-
-\---
-
 
 
 \# Installation
@@ -538,10 +402,7 @@ source .venv/bin/activate
 
 ```
 
-
-
 Windows :
-
 
 
 ```bash
@@ -550,10 +411,7 @@ Windows :
 
 ```
 
-
-
 Installation des dépendances :
-
 
 
 ```bash
@@ -630,9 +488,7 @@ output/
 \---
 
 
-
 \# Stack technique  
-
 
 
 \* Python
@@ -664,17 +520,13 @@ output/
 \# Contributions
 
 
-
 Les contributions sont les bienvenues.
-
 
 
 N'hésitez pas à ouvrir une \*Issue\* ou une \*Pull Request\* afin de proposer une amélioration.
 
 
-
 \---
-
 
 
 \# Licence
