@@ -2,7 +2,6 @@ from pathlib import Path
 import geopandas as gpd
 from pyogrio.errors import DataSourceError
 
-
 # Formats supportés
 FORMATS_SUPPORTES = [
     ".geojson",

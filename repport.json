@@ -1,0 +1,31 @@
+{
+    "comparaisons": {
+        "colonnes_ajoutees": [],
+        "colonnes_supprimees": [],
+        "types_modifies": {},
+        "crs": [
+            4326,
+            4326
+        ],
+        "nombre_entites": [
+            19,
+            19,
+            0
+        ],
+        "entites_ajoutees": [],
+        "entites_supprimees": [],
+        "modifications": [],
+        "geometries_modifiees": []
+    },
+    "statistiques": {
+        "Nombre_colonnes_ajoutees": 0,
+        "Nombre_colonnes_supprimees": 0,
+        "Nombre_entites_old": 19,
+        "Nombre_entites_new": 19,
+        "difference": 0,
+        "nombre_entites_ajoutes": 0,
+        "nombre_entites_supprimes": 0,
+        "nombre_modifications": 0,
+        "nombre_geometries_modifiees": 0
+    }
+}

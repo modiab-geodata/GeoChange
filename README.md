@@ -275,10 +275,6 @@ Production automatique de statistiques :
 
 \* nombre de modifications ;
 
-\* évolution des surfaces ;
-
-\* évolution des longueurs.
-
 
 \---
 

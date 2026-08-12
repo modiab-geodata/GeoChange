@@ -1,5 +1,4 @@
 def geometries_modifiees(gdf_old, gdf_new, colonne_id):
-
     geometry_colonne = gdf_old.geometry.name
 
     ancien = gdf_old[[colonne_id, geometry_colonne]]
@@ -7,8 +6,8 @@ def geometries_modifiees(gdf_old, gdf_new, colonne_id):
 
     comparaison = ancien.merge(
         nouveau,
-        on=colonne_id,
-        suffixes=("_old", "_new")
+        on= colonne_id,
+        suffixes = ("_old", "_new")
     )
 
     geometries_differentes = ~comparaison.apply(
@@ -19,7 +18,6 @@ def geometries_modifiees(gdf_old, gdf_new, colonne_id):
     )
 
     lignes_modifiees = comparaison[geometries_differentes]
-
     modifications = []
 
     for _, ligne in lignes_modifiees.iterrows():
@@ -28,5 +26,4 @@ def geometries_modifiees(gdf_old, gdf_new, colonne_id):
             "ancienne_geometrie": ligne[f"{geometry_colonne}_old"],
             "nouvelle_geometrie": ligne[f"{geometry_colonne}_new"]
         })
-
     return modifications
