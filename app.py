@@ -1519,6 +1519,6 @@ if fichiers_old and fichiers_new:
 else:
 
     st.info(
-        "Chargez une Ancienne couche et une Nouvelle couche "
+        "Chargez une ancienne couche et une nouvelle couche "
         "depuis le menu à gauche pour démarrer l'analyse."
     )
