@@ -10,7 +10,7 @@ GeoChange fournit également une **interface web interactive développée avec S
 
 Les résultats peuvent être exportés sous différents formats afin de conserver une trace exploitable de l'analyse.
 
-**Application en ligne : []**
+**Tester l'application en ligne : [https://geochange.streamlit.app/]**
 
 ---
 
@@ -642,8 +642,9 @@ git push origin feature/nouvelle-fonctionnalite
 
 # Auteur
 
-**Moussa DIABY**
+Moussa DIABY
 
 Ingénieur SIG • Consultant Data & Géomatique
 
-GitHub : [modiab-geodata](https://github.com/modiab-geodata)
+GitHub : https://github.com/modiab-geodata
+LinkedIn : https://www.linkedin.com/in/moussadiaby/

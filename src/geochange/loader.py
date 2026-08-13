@@ -33,14 +33,6 @@ def load_file(path):
         print(f"Impossible de lire le fichier : {path}")
         return None
 
-    # ------------------------------------------------------------
-    # Diagnostic : compare les champs réellement présents dans le
-    # fichier source (lus directement via les métadonnées GDAL/pyogrio,
-    # indépendamment du GeoDataFrame construit) aux champs effectivement
-    # chargés. Utile en particulier pour les Shapefile, où un champ
-    # peut être ignoré selon l'encodage (.cpg) ou une collision de noms
-    # après troncature à 10 caractères (limite du format DBF).
-    # ------------------------------------------------------------
 
     try:
         info = pyogrio.read_info(str(path))
@@ -60,7 +52,7 @@ def load_file(path):
 
         if champs_manquants:
             print(
-                f"⚠️ {len(champs_manquants)} champ(s) du fichier source "
+                f"{len(champs_manquants)} champ(s) du fichier source "
                 f"absent(s) après lecture : {champs_manquants}"
             )
 
