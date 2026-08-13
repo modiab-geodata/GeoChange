@@ -40,7 +40,7 @@ from geochange.stats import (
 )
 
 
-def main(path_old, path_new):
+def main(path_old, path_new, colonne_id=None):
 
     print("==============================")
     print("Démarrage GeoChange")
@@ -49,6 +49,8 @@ def main(path_old, path_new):
     # ==========================================
     # 1. Chargement des couches
     # ==========================================
+
+    print("\n===== CHARGEMENT DES COUCHES =====")
 
     gdf_old = load_file(path_old)
     gdf_new = load_file(path_new)
@@ -74,11 +76,63 @@ def main(path_old, path_new):
     verifier_colonnes(gdf_old)
     verifier_colonnes(gdf_new)
 
-    verifier_cle_primaire(gdf_old, "code_iris")
-    verifier_cle_primaire(gdf_new, "code_iris")
+    # ==========================================
+    # 3. Validation de la clé d'identification
+    # ==========================================
+
+    print("\n===== IDENTIFICATION DES ENTITÉS =====")
+
+    cle_valide = False
+
+    if colonne_id is None:
+        print(
+            "Aucune clé d'identification n'a été définie."
+        )
+        print(
+            "Les analyses nécessitant une correspondance "
+            "entre entités seront désactivées."
+        )
+
+    else:
+
+        print(
+            f"Clé d'identification sélectionnée : "
+            f"'{colonne_id}'"
+        )
+
+        cle_old_valide = verifier_cle_primaire(
+            gdf_old,
+            colonne_id
+        )
+
+        cle_new_valide = verifier_cle_primaire(
+            gdf_new,
+            colonne_id
+        )
+
+        if cle_old_valide and cle_new_valide:
+
+            cle_valide = True
+
+            print(
+                f"La clé '{colonne_id}' est valide "
+                "pour les deux couches."
+            )
+
+        else:
+
+            print(
+                f"La clé '{colonne_id}' ne peut pas être utilisée "
+                "pour identifier les entités."
+            )
+
+            print(
+                "Les analyses nécessitant une correspondance "
+                "entre entités seront désactivées."
+            )
 
     # ==========================================
-    # 3. Comparaison des couches
+    # 4. Comparaison structurelle
     # ==========================================
 
     print("\n===== COMPARAISON DES COUCHES =====")
@@ -108,35 +162,64 @@ def main(path_old, path_new):
         gdf_new
     )
 
-    entites_ajoutees_resultat = entites_ajoutees(
-        gdf_old,
-        gdf_new,
-        "code_iris"
-    )
+    # ==========================================
+    # 5. Comparaisons par entité
+    # ==========================================
 
-    entites_supprimees_resultat = entites_supprimees(
-        gdf_old,
-        gdf_new,
-        "code_iris"
-    )
+    if cle_valide:
 
-    modifications_resultat = modifications_valeurs(
-        gdf_old,
-        gdf_new,
-        "code_iris"
-    )
+        print("\n===== COMPARAISON PAR ENTITÉ =====")
 
-    geometries_modifiees_resultat = geometries_modifiees(
-        gdf_old,
-        gdf_new,
-        "code_iris"
-    )
+        entites_ajoutees_resultat = entites_ajoutees(
+            gdf_old,
+            gdf_new,
+            colonne_id
+        )
+
+        entites_supprimees_resultat = entites_supprimees(
+            gdf_old,
+            gdf_new,
+            colonne_id
+        )
+
+        modifications_resultat = modifications_valeurs(
+            gdf_old,
+            gdf_new,
+            colonne_id
+        )
+
+        geometries_modifiees_resultat = geometries_modifiees(
+            gdf_old,
+            gdf_new,
+            colonne_id
+        )
+
+    else:
+
+        print(
+            "\n===== COMPARAISON PAR ENTITÉ ====="
+        )
+
+        print(
+            "Analyses par entité ignorées : "
+            "aucune clé d'identification valide."
+        )
+
+        entites_ajoutees_resultat = None
+        entites_supprimees_resultat = None
+        modifications_resultat = None
+        geometries_modifiees_resultat = None
 
     # ==========================================
-    # 4. Affichage des résultats de comparaison
+    # 6. Résultats des comparaisons
     # ==========================================
 
     print("\n===== RÉSULTATS DES COMPARAISONS =====")
+
+    print(
+        "Clé d'identification :",
+        colonne_id if cle_valide else "Aucune"
+    )
 
     print(
         "Colonnes ajoutées :",
@@ -163,28 +246,48 @@ def main(path_old, path_new):
         nombre_entites_resultat
     )
 
-    print(
-        "Entités ajoutées :",
-        entites_ajoutees_resultat
-    )
+    if cle_valide:
 
-    print(
-        "Entités supprimées :",
-        entites_supprimees_resultat
-    )
+        print(
+            "Entités ajoutées :",
+            entites_ajoutees_resultat
+        )
 
-    print(
-        "Modifications :",
-        modifications_resultat
-    )
+        print(
+            "Entités supprimées :",
+            entites_supprimees_resultat
+        )
 
-    print(
-        "Géométries modifiées :",
-        geometries_modifiees_resultat
-    )
+        print(
+            "Modifications :",
+            modifications_resultat
+        )
+
+        print(
+            "Géométries modifiées :",
+            geometries_modifiees_resultat
+        )
+
+    else:
+
+        print(
+            "Entités ajoutées : non calculées"
+        )
+
+        print(
+            "Entités supprimées : non calculées"
+        )
+
+        print(
+            "Modifications : non calculées"
+        )
+
+        print(
+            "Géométries modifiées : non calculées"
+        )
 
     # ==========================================
-    # 5. Production des statistiques
+    # 7. Production des statistiques générales
     # ==========================================
 
     statistiques_colonnes_ajoutees_resultat = (
@@ -199,34 +302,79 @@ def main(path_old, path_new):
         )
     )
 
-    statistiques_entites_resultat = statistiques_entites(
-        nombre_entites_resultat
-    )
-
-    statistiques_modifications_resultat = statistiques_modifications(
-        modifications_resultat
-    )
-
-    statistiques_entites_ajoutes_resultat = statistiques_entites_ajoutes(
-        entites_ajoutees_resultat
-    )
-
-    statistiques_entites_supprimes_resultat = statistiques_entites_supprimes(
-        entites_supprimees_resultat
-    )
-
-    statistiques_geometries_modifiees_resultat = (
-        statistiques_geometries_modifiees(
-            geometries_modifiees_resultat
+    statistiques_entites_resultat = (
+        statistiques_entites(
+            nombre_entites_resultat
         )
     )
 
     # ==========================================
-    # 6. Construction du résultat complet
+    # 8. Statistiques dépendantes de la clé
+    # ==========================================
+
+    if cle_valide:
+
+        statistiques_modifications_resultat = (
+            statistiques_modifications(
+                modifications_resultat
+            )
+        )
+
+        statistiques_entites_ajoutes_resultat = (
+            statistiques_entites_ajoutes(
+                entites_ajoutees_resultat
+            )
+        )
+
+        statistiques_entites_supprimes_resultat = (
+            statistiques_entites_supprimes(
+                entites_supprimees_resultat
+            )
+        )
+
+        statistiques_geometries_modifiees_resultat = (
+            statistiques_geometries_modifiees(
+                geometries_modifiees_resultat
+            )
+        )
+
+    else:
+
+        statistiques_modifications_resultat = {
+            "nombre_modifications": None
+        }
+
+        statistiques_entites_ajoutes_resultat = {
+            "nombre_entites_ajoutes": None
+        }
+
+        statistiques_entites_supprimes_resultat = {
+            "nombre_entites_supprimes": None
+        }
+
+        statistiques_geometries_modifiees_resultat = {
+            "nombre_geometries_modifiees": None
+        }
+
+    # ==========================================
+    # 9. Construction du résultat complet
     # ==========================================
 
     resultats = {
+
+        "configuration": {
+
+            "colonne_id": (
+                colonne_id
+                if cle_valide
+                else None
+            ),
+
+            "analyses_par_entite": cle_valide
+        },
+
         "comparaisons": {
+
             "colonnes_ajoutees": list(
                 colonnes_ajoutees_resultat
             ),
@@ -241,32 +389,51 @@ def main(path_old, path_new):
 
             "nombre_entites": nombre_entites_resultat,
 
-            "entites_ajoutees": list(
-                entites_ajoutees_resultat
+            "entites_ajoutees": (
+                list(entites_ajoutees_resultat)
+                if entites_ajoutees_resultat is not None
+                else None
             ),
 
-            "entites_supprimees": list(
-                entites_supprimees_resultat
+            "entites_supprimees": (
+                list(entites_supprimees_resultat)
+                if entites_supprimees_resultat is not None
+                else None
             ),
 
-            "modifications": modifications_resultat,
+            "modifications": (
+                modifications_resultat
+                if modifications_resultat is not None
+                else None
+            ),
 
-            "geometries_modifiees": geometries_modifiees_resultat
+            "geometries_modifiees": (
+                geometries_modifiees_resultat
+                if geometries_modifiees_resultat is not None
+                else None
+            )
         },
 
         "statistiques": {
+
             **statistiques_colonnes_ajoutees_resultat,
+
             **statistiques_colonnes_supprimees_resultat,
+
             **statistiques_entites_resultat,
+
             **statistiques_entites_ajoutes_resultat,
+
             **statistiques_entites_supprimes_resultat,
+
             **statistiques_modifications_resultat,
+
             **statistiques_geometries_modifiees_resultat
         }
     }
 
     # ==========================================
-    # 7. Affichage des statistiques
+    # 10. Affichage des statistiques
     # ==========================================
 
     print("\n===== RÉSULTATS STATISTIQUES =====")
@@ -307,8 +474,10 @@ def main(path_old, path_new):
     )
 
     # ==========================================
-    # 8. Export JSON
+    # 11. Export des rapports
     # ==========================================
+
+    print("\n===== EXPORT DES RAPPORTS =====")
 
     exporter_json(
         resultats,
@@ -320,22 +489,47 @@ def main(path_old, path_new):
         "reports/rapport.pdf"
     )
 
-    # ==========================================a
-    # 9. Résultat complet
+    # ==========================================
+    # 12. Résultat complet
     # ==========================================
 
     print("\n===== RÉSULTATS COMPLETS =====")
+
     print(resultats)
+
+    print("\n==============================")
+    print("GeoChange terminé")
+    print("==============================")
 
     return resultats
 
 
+# ==============================================
+# Exécution directe du programme
+# ==============================================
+
 if __name__ == "__main__":
 
-    path_old = Path("data/input/iris_old.geojson")
-    path_new = Path("data/input/iris.geojson")
+    path_old = Path(
+        "data/input/iris_old.geojson"
+    )
+
+    path_new = Path(
+        "data/input/iris.geojson"
+    )
+
+    # Pour une exécution sans clé :
+    #
+    # resultats = main(
+    #     path_old,
+    #     path_new
+    # )
+
+    # Pour une exécution avec une clé :
+    colonne_id = "code_iris"
 
     resultats = main(
         path_old,
-        path_new
+        path_new,
+        colonne_id
     )

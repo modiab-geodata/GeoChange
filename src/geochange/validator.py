@@ -97,3 +97,33 @@ def verifier_cle_primaire(gdf, colonne):
     print(f"La colonne '{colonne}' peut servir de clé primaire.")
     return True
 
+def trouver_cles_candidates(gdf):
+    """
+    Recherche les colonnes pouvant servir d'identifiant unique.
+
+    Une colonne candidate doit :
+    - ne contenir aucune valeur nulle ;
+    - contenir uniquement des valeurs uniques.
+
+    La colonne geometry est exclue.
+    """
+
+    candidates = []
+
+    for colonne in gdf.columns:
+
+        # On ne considère pas la géométrie comme clé
+        if colonne == gdf.geometry.name:
+            continue
+
+        serie = gdf[colonne]
+
+        # Pas de valeurs nulles
+        if serie.isna().any():
+            continue
+
+        # Toutes les valeurs doivent être uniques
+        if serie.is_unique:
+            candidates.append(colonne)
+
+    return candidates
