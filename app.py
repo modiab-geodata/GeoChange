@@ -211,14 +211,11 @@ st.markdown(
 # SIDEBAR
 # ============================================================
 
-FORMATS_ACCEPTES = ["geojson", "gpkg", "shp"]
+FORMATS_ACCEPTES = ["geojson", "gpkg"]
 
 AIDE_UPLOAD = (
-    "Formats acceptés : GeoJSON (.geojson), "
-    "GeoPackage (.gpkg) et Shapefile (.shp)."
+    "Formats acceptés : GeoJSON (.geojson) et GeoPackage (.gpkg)."
 )
-
-EXTENSIONS_SHAPEFILE_ANNEXES = ["dbf", "shx", "prj", "cpg"]
 
 with st.sidebar:
 
@@ -232,7 +229,7 @@ with st.sidebar:
         """
         <div style="font-size:0.8rem; opacity:0.75; margin-bottom:0.6rem; line-height:1.5;">
         <b>Formats supportés</b><br>
-         GeoJSON - GeoPackage - Shapefile (sélectionnez toutes les dépendances.)
+         GeoJSON - GeoPackage
         </div>
         """,
         unsafe_allow_html=True,
@@ -240,45 +237,19 @@ with st.sidebar:
 
     fichiers_old = st.file_uploader(
         "Ancienne couche",
-        type=FORMATS_ACCEPTES + EXTENSIONS_SHAPEFILE_ANNEXES,
-        help=AIDE_UPLOAD + " Pour un Shapefile, sélectionnez tous les "
-        "fichiers du jeu (.shp, .dbf, .shx, .prj) en une seule fois.",
+        type=FORMATS_ACCEPTES,
+        help=AIDE_UPLOAD,
         accept_multiple_files=True,
         key="upload_old",
     )
 
     fichiers_new = st.file_uploader(
         "Nouvelle couche",
-        type=FORMATS_ACCEPTES + EXTENSIONS_SHAPEFILE_ANNEXES,
-        help=AIDE_UPLOAD + " Pour un Shapefile, sélectionnez tous les "
-        "fichiers du jeu (.shp, .dbf, .shx, .prj) en une seule fois.",
+        type=FORMATS_ACCEPTES,
+        help=AIDE_UPLOAD,
         accept_multiple_files=True,
         key="upload_new",
     )
-
-    def _contient_shp_incomplet(fichiers):
-        """Détecte un .shp uploadé sans ses fichiers annexes obligatoires."""
-
-        if not fichiers:
-            return False
-
-        noms = [f.name.lower() for f in fichiers]
-
-        if not any(nom.endswith(".shp") for nom in noms):
-            return False
-
-        return not (
-            any(nom.endswith(".dbf") for nom in noms)
-            and any(nom.endswith(".shx") for nom in noms)
-        )
-
-    if _contient_shp_incomplet(fichiers_old) or _contient_shp_incomplet(fichiers_new):
-        st.error(
-            "❌ Un fichier .shp a été détecté sans ses fichiers annexes "
-            "obligatoires (.dbf et .shx). Sélectionnez l'ensemble des "
-            "fichiers du Shapefile en même temps (maintenez Ctrl/Cmd "
-            "lors de la sélection dans l'explorateur de fichiers)."
-        )
 
 
 # ============================================================
@@ -291,9 +262,9 @@ def charger_fichier(fichiers):
     dossier temporaire, puis utilise le loader de GeoChange sur le
     fichier principal.
 
-    `fichiers` est une liste : un seul élément pour GeoJSON/GeoPackage,
-    plusieurs pour un Shapefile (.shp + .dbf + .shx + .prj, qui doivent
-    être présents côte à côte sur le disque pour être lus correctement).
+    `fichiers` est une liste : normalement un seul élément (GeoJSON
+    ou GeoPackage), la structure en liste étant conservée pour
+    l'uniformité du code.
     """
 
     if not fichiers:
@@ -303,7 +274,7 @@ def charger_fichier(fichiers):
 
     chemin_principal = None
 
-    extensions_principales = {".shp", ".gpkg", ".geojson"}
+    extensions_principales = {".gpkg", ".geojson"}
 
     for fichier in fichiers:
 
@@ -378,6 +349,36 @@ def _convertir_valeur_json_safe(valeur):
         return str(valeur)
 
 
+def _dedupliquer_colonnes(gdf):
+    """
+    Renomme les colonnes en double (même nom exact) pour garantir des
+    noms uniques. Peut arriver avec certains Shapefile où deux champs
+    distincts, chacun tronqué différemment par le logiciel d'origine,
+    finissent avec le même nom exact dans l'en-tête DBF. Sans ce
+    traitement, gdf[nom_colonne] renvoie un DataFrame (pas une Series)
+    dès qu'un nom est dupliqué, ce qui casse toute manipulation
+    ultérieure (ex : KeyError: 0 lors d'une réaffectation de colonne).
+    """
+
+    colonnes = list(gdf.columns)
+    vus = {}
+    nouvelles_colonnes = []
+
+    for nom in colonnes:
+        if nom not in vus:
+            vus[nom] = 0
+            nouvelles_colonnes.append(nom)
+        else:
+            vus[nom] += 1
+            nouvelles_colonnes.append(f"{nom}_dup{vus[nom]}")
+
+    if nouvelles_colonnes != colonnes:
+        gdf = gdf.copy()
+        gdf.columns = nouvelles_colonnes
+
+    return gdf
+
+
 def normaliser_attributs(gdf):
     """
     Nettoie les colonnes d'attributs (hors géométrie) d'un GeoDataFrame
@@ -389,6 +390,16 @@ def normaliser_attributs(gdf):
         return None
 
     gdf = gdf.copy()
+
+    gdf = _dedupliquer_colonnes(gdf)
+
+    # Force un index de lignes standard (0, 1, 2, ...). Certains
+    # Shapefile sont chargés par pyogrio avec un index non entier
+    # (basé sur le champ FID interne), ce qui fait planter pandas
+    # lors de la réaffectation de colonnes via .apply() plus bas
+    # (KeyError: 0 — pandas cherche l'étiquette "0" au lieu de la
+    # position 0 quand l'index n'est pas un RangeIndex classique).
+    gdf = gdf.reset_index(drop=True)
 
     colonnes_attributs = [
         colonne for colonne in gdf.columns
@@ -878,14 +889,13 @@ st.markdown(
 # ============================================================
 
 def nom_principal(fichiers):
-    """Renvoie le nom du fichier principal d'un jeu uploadé (le .shp,
-    .gpkg ou .geojson), pour l'affichage — même si d'autres fichiers
-    annexes (.dbf, .shx, .prj) ont aussi été sélectionnés."""
+    """Renvoie le nom du fichier principal d'un jeu uploadé
+    (le .gpkg ou .geojson), pour l'affichage."""
 
     if not fichiers:
         return None
 
-    extensions_principales = {".shp", ".gpkg", ".geojson"}
+    extensions_principales = {".gpkg", ".geojson"}
 
     for fichier in fichiers:
         if Path(fichier.name).suffix.lower() in extensions_principales:
@@ -964,9 +974,14 @@ if fichiers_old and fichiers_new:
 
         except Exception as erreur:
 
+            import traceback
+
             st.error(
                 f"❌ Impossible de charger les couches : {erreur}"
             )
+
+            with st.expander("Détails techniques (pour diagnostic)"):
+                st.code(traceback.format_exc())
 
             st.stop()
 
@@ -974,9 +989,8 @@ if fichiers_old and fichiers_new:
 
             st.error(
                 "❌ Une des deux couches n'a pas pu être lue. "
-                "Si c'est un Shapefile, vérifiez que vous avez bien "
-                "sélectionné tous les fichiers du jeu ensemble "
-                "(.shp, .dbf, .shx, .prj)."
+                "Vérifiez que le fichier est un GeoJSON (.geojson) ou "
+                "un GeoPackage (.gpkg) valide."
             )
 
             st.stop()

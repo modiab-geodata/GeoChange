@@ -4,7 +4,7 @@ from pyogrio.errors import DataSourceError
 
 FORMATS_SUPPORTES = [
     ".geojson",
-    ".shp",
+    #".shp",
     ".gpkg"
 ]
 

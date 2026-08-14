@@ -45,7 +45,6 @@ Formats actuellement pris en charge :
 
 * GeoJSON ;
 * GeoPackage ;
-* Shapefile.
 
 Les fichiers peuvent être chargés directement depuis l'interface Streamlit.
 
@@ -361,7 +360,7 @@ L'application repose sur une architecture séparant les différentes responsabil
 | Cartographie                   | Folium                               |
 | Intégration Folium / Streamlit | streamlit-folium                     |
 | Rapports PDF                   | ReportLab                            |
-| Format de données              | GeoJSON, GeoPackage, Shapefile |
+| Format de données              | GeoJSON, GeoPackage |
 | Gestion des fichiers           | pathlib                              |
 | Versionnement                  | Git / GitHub                         |
 
