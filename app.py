@@ -280,8 +280,6 @@ with st.sidebar:
             "lors de la sélection dans l'explorateur de fichiers)."
         )
 
-    st.divider()
-
 
 # ============================================================
 # CHARGEMENT DES FICHIERS
@@ -1155,40 +1153,40 @@ if fichiers_old and fichiers_new:
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
-            st.metric("Entités — ancienne", len(gdf_old))
+            st.metric("Nombre d'entités-ancienne couche", len(gdf_old))
 
         with col2:
             st.metric(
-                "Entités — nouvelle",
+                "Nombre d'entités-nouvelle couche",
                 len(gdf_new),
                 #delta=len(gdf_new) - len(gdf_old),
             )
 
         with col3:
             st.metric(
-                "Attributs modifiés",
+                "Nombre d'attributs modifiés",
                 statistiques["nombre_modifications"],
             )
 
         with col4:
             st.metric(
-                "Géométries modifiées",
+                "Nombre de géométries modifiées",
                 statistiques["nombre_geometries_modifiees"],
             )
 
         col5, col6, col7, col8 = st.columns(4)
 
         with col5:
-            st.metric("Entités ajoutées", statistiques["nombre_entites_ajoutes"])
+            st.metric("Nombre d'entités ajoutées", statistiques["nombre_entites_ajoutes"])
 
         with col6:
-            st.metric("Entités supprimées", statistiques["nombre_entites_supprimes"])
+            st.metric("Nombre d'entités supprimées", statistiques["nombre_entites_supprimes"])
 
         with col7:
-            st.metric("Colonnes ajoutées", len(comparaisons["colonnes_ajoutees"]))
+            st.metric("Nombre de colonnes ajoutées", len(comparaisons["colonnes_ajoutees"]))
 
         with col8:
-            st.metric("Colonnes supprimées", len(comparaisons["colonnes_supprimees"]))
+            st.metric("Nombre de colonnes supprimées", len(comparaisons["colonnes_supprimees"]))
 
         st.divider()
 
@@ -1220,10 +1218,10 @@ if fichiers_old and fichiers_new:
 
     with tab_carte:
 
-        st.subheader("Exploration cartographique")
+        st.subheader("Visualisation cartographique")
 
         st.markdown(
-            '<p class="sous-titre">Visualisation superposée des deux versions de la '
+            '<p class="sous-titre">Visualisation des deux versions de la '
             'couche. Utilisez le contrôle des couches en haut à droite pour afficher '
             'ou masquer chaque version.</p>',
             unsafe_allow_html=True,
@@ -1306,21 +1304,23 @@ if fichiers_old and fichiers_new:
 
         with col1:
             with st.container(border=True):
-                st.metric("Colonnes ajoutées", len(comparaisons["colonnes_ajoutees"]))
+                st.metric("Nombre de colonnes ajoutées", len(comparaisons["colonnes_ajoutees"]))
                 if comparaisons["colonnes_ajoutees"]:
                     afficher_chips(comparaisons["colonnes_ajoutees"], "chip-add")
 
         with col2:
             with st.container(border=True):
-                st.metric("Colonnes supprimées", len(comparaisons["colonnes_supprimees"]))
+                st.metric("Nombre de colonnes supprimées", len(comparaisons["colonnes_supprimees"]))
                 if comparaisons["colonnes_supprimees"]:
                     afficher_chips(comparaisons["colonnes_supprimees"], "chip-del")
 
         with col3:
             with st.container(border=True):
-                st.metric("Types modifiés", len(comparaisons["types_modifies"]))
+                st.metric("Nombre de types de données modifiés", len(comparaisons["types_modifies"]))
                 if comparaisons["types_modifies"]:
-                    st.write(comparaisons["types_modifies"])
+                    for champ, types in comparaisons["types_modifies"].items():
+                        types_lisibles = " → ".join(str(t) for t in types)
+                        st.write(f"**{champ}** : {types_lisibles}")
 
     # ========================================================
     # 5. ENTITES
@@ -1344,10 +1344,10 @@ if fichiers_old and fichiers_new:
             col1, col2, col3 = st.columns(3)
 
             with col1:
-                st.metric("Entités ajoutées", statistiques["nombre_entites_ajoutes"])
+                st.metric("Nombre d'entités ajoutées", statistiques["nombre_entites_ajoutes"])
 
             with col2:
-                st.metric("Entités supprimées", statistiques["nombre_entites_supprimes"])
+                st.metric("Nombre d'entités supprimées", statistiques["nombre_entites_supprimes"])
 
             with col3:
                 st.metric("Différence totale", len(gdf_new) - len(gdf_old))
@@ -1355,7 +1355,7 @@ if fichiers_old and fichiers_new:
             st.divider()
 
             tab_ajoutees, tab_supprimees = st.tabs(
-                ["Entités ajoutées", "Entités supprimées"]
+                ["Nombre d'entités ajoutées", "Nombre d'entités supprimées"]
             )
 
             with tab_ajoutees:
@@ -1398,13 +1398,13 @@ if fichiers_old and fichiers_new:
             col1, col2, col3 = st.columns(3)
 
             with col1:
-                st.metric("Attributs modifiés", statistiques["nombre_modifications"])
+                st.metric("Nomnre d'attributs modifiés", statistiques["nombre_modifications"])
 
             with col2:
-                st.metric("Géométries modifiées", statistiques["nombre_geometries_modifiees"])
+                st.metric("Nombre de géométries modifiées", statistiques["nombre_geometries_modifiees"])
 
             with col3:
-                st.metric("Identifiant utilisé", colonne_id)
+                st.metric("Nom de l'identifiant utilisé", colonne_id)
 
             st.divider()
 
@@ -1459,7 +1459,7 @@ if fichiers_old and fichiers_new:
         st.markdown(
             '<p class="sous-titre">Téléchargez les résultats de l\'analyse '
             "(validations, comparaisons, statistiques) au format JSON ou "
-            "sous forme de rapport PDF mis en forme.</p>",
+            "sous forme de rapport PDF.</p>",
             unsafe_allow_html=True,
         )
 

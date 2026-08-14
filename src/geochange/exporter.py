@@ -100,7 +100,7 @@ def _entete_pied_page(canvas, document):
 
     largeur, hauteur = A4
 
-    # --- En-tête : bandeau de couleur + titre court ---
+    # En-tête : bandeau de couleur et titre
     canvas.setFillColor(COULEUR_PRIMAIRE)
     canvas.rect(0, hauteur - 18 * mm, largeur, 18 * mm, fill=1, stroke=0)
 
@@ -115,7 +115,7 @@ def _entete_pied_page(canvas, document):
         datetime.now().strftime("%d/%m/%Y")
     )
 
-    # --- Pied de page : ligne fine + numéro de page ---
+    # Pied de page : ligne fine et numéro de page 
     canvas.setStrokeColor(COULEUR_BORDURE)
     canvas.setLineWidth(0.5)
     canvas.line(20 * mm, 15 * mm, largeur - 20 * mm, 15 * mm)
@@ -144,7 +144,7 @@ def exporter_pdf(resultat, chemin_sortie):
     contenu = []
 
     # ==========================================
-    # TITRE
+    # TITRE DU RAPPORT
     # ==========================================
 
     contenu.append(Paragraph("Rapport de comparaison GeoChange", styles["titre"]))

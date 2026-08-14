@@ -99,13 +99,7 @@ def verifier_cle_primaire(gdf, colonne):
 
 def trouver_cles_candidates(gdf):
     """
-    Recherche les colonnes pouvant servir d'identifiant unique.
-
-    Une colonne candidate doit :
-    - ne contenir aucune valeur nulle ;
-    - contenir uniquement des valeurs uniques.
-
-    La colonne geometry est exclue.
+    Rechercher les colonnes pouvant servir d'identifiant unique.
     """
 
     candidates = []
@@ -122,7 +116,7 @@ def trouver_cles_candidates(gdf):
         if serie.isna().any():
             continue
 
-        # Toutes les valeurs doivent être uniques
+        # Les valeurs doivent être uniques
         if serie.is_unique:
             candidates.append(colonne)
 
