@@ -261,10 +261,6 @@ def charger_fichier(fichiers):
     Reconstruit un jeu de fichiers uploadés (Streamlit) dans un même
     dossier temporaire, puis utilise le loader de GeoChange sur le
     fichier principal.
-
-    `fichiers` est une liste : normalement un seul élément (GeoJSON
-    ou GeoPackage), la structure en liste étant conservée pour
-    l'uniformité du code.
     """
 
     if not fichiers:
@@ -296,13 +292,6 @@ def _convertir_valeur_json_safe(valeur):
     """
     Convertit récursivement une valeur en types Python natifs
     sérialisables (JSON, Folium/GeoJSON, export...).
-
-    Nécessaire car certains formats (Shapefile, GeoPackage) peuvent
-    charger des attributs sous forme de numpy.ndarray, numpy.int64,
-    pandas.Timestamp, Decimal, bytes, etc. — non sérialisables tels
-    quels. Pour tout type non prévu explicitement, une conversion en
-    texte est appliquée en dernier recours, afin qu'aucun type de
-    donnée ne puisse faire planter l'application.
     """
 
     if valeur is None:
@@ -340,8 +329,7 @@ def _convertir_valeur_json_safe(valeur):
     if isinstance(valeur, (str, int, float, bool)):
         return valeur
 
-    # Filet de sécurité final : tout type non reconnu est converti
-    # en texte plutôt que de faire planter l'application.
+    # Filet de sécurité final : tout type non reconnu est converti en texte
     try:
         json.dumps(valeur)
         return valeur
@@ -350,15 +338,6 @@ def _convertir_valeur_json_safe(valeur):
 
 
 def _dedupliquer_colonnes(gdf):
-    """
-    Renomme les colonnes en double (même nom exact) pour garantir des
-    noms uniques. Peut arriver avec certains Shapefile où deux champs
-    distincts, chacun tronqué différemment par le logiciel d'origine,
-    finissent avec le même nom exact dans l'en-tête DBF. Sans ce
-    traitement, gdf[nom_colonne] renvoie un DataFrame (pas une Series)
-    dès qu'un nom est dupliqué, ce qui casse toute manipulation
-    ultérieure (ex : KeyError: 0 lors d'une réaffectation de colonne).
-    """
 
     colonnes = list(gdf.columns)
     vus = {}
@@ -381,7 +360,7 @@ def _dedupliquer_colonnes(gdf):
 
 def normaliser_attributs(gdf):
     """
-    Nettoie les colonnes d'attributs (hors géométrie) d'un GeoDataFrame
+    Nettoie les colonnes d'attributs (hors géométrie) du GeoDataFrame
     pour garantir des types sérialisables partout dans l'app : carte
     Folium, export JSON, comparaison des valeurs.
     """
@@ -451,7 +430,15 @@ def verifier_identifiant(gdf, colonne):
         return False, f"{valeurs_nulles} valeur(s) nulle(s)."
 
     if doublons > 0:
-        return False, f"{doublons} doublon(s) détecté(s)."
+        masque_doublons = gdf[colonne].duplicated(keep=False)
+        nb_lignes_concernees = int(masque_doublons.sum())
+        nb_valeurs_dupliquees = int(
+            gdf.loc[masque_doublons, colonne].nunique()
+        )
+        return False, (
+            f"{nb_valeurs_dupliquees} valeur(s) dupliquée(s) "
+            f"({nb_lignes_concernees} ligne(s) concernée(s))."
+        )
 
     return True, "Identifiant unique valide."
 
@@ -461,13 +448,6 @@ def verifier_identifiant(gdf, colonne):
 # ============================================================
 
 def analyser_couches(gdf_old, gdf_new, colonne_id=None):
-    """
-    Reproduit la logique de main.py : les analyses par entité
-    (entités ajoutées/supprimées, modifications, géométries modifiées)
-    ne sont calculées que si `colonne_id` est fourni et valide dans
-    les deux couches. Sinon, elles sont mises à None, comme dans le
-    script principal.
-    """
 
     # --------------------------------------------------------
     # Validation
@@ -725,11 +705,7 @@ def construire_carte(gdf_old, gdf_new):
 
     # --------------------------------------------------------
     # Style des points : cercles vectoriels (SVG) plutôt que des
-    # marqueurs "épingle" par défaut de Leaflet. Les marqueurs par
-    # défaut chargent une image externe (marker-icon.png) qui peut
-    # être bloquée par certains pare-feux/proxys d'entreprise et
-    # s'afficher comme une icône cassée. Les cercles sont dessinés
-    # directement en SVG, sans aucune image à charger.
+    # marqueurs "épingle" par défaut de Leaflet. 
     # --------------------------------------------------------
 
     # --------------------------------------------------------
@@ -905,22 +881,6 @@ def nom_principal(fichiers):
 
 
 def reconcilier_colonnes_tronquees(gdf_old, gdf_new):
-    """
-    Certains exports Shapefile tronquent les noms de champs à des
-    longueurs différentes selon le logiciel/la version utilisée
-    (limite du format DBF), ce qui peut donner deux noms de colonnes
-    légèrement différents pour un même champ d'origine entre deux
-    versions de la même couche (ex: "Localisati" vs "Localisatio").
-
-    Détecte ces cas sans ambiguïté (un nom est un préfixe strict de
-    l'autre, et la correspondance est unique dans les deux sens) et
-    harmonise le nom dans gdf_new pour qu'il corresponde à celui de
-    gdf_old.
-
-    Retourne (gdf_new_harmonise, correspondances), où correspondances
-    est une liste de tuples (nom_old, nom_new) pour affichage.
-    """
-
     colonnes_old = [
         c for c in gdf_old.columns if c != gdf_old.geometry.name
     ]
@@ -996,7 +956,7 @@ if fichiers_old and fichiers_new:
             st.stop()
 
     # --------------------------------------------------------
-    # Choix de l'identifiant — optionnel, comme dans main.py.
+    # Choix de l'identifiant — optionnel,
     # Sans identifiant valide, les analyses par entité (Entités,
     # Modifications) sont désactivées mais le reste de l'app
     # (Vue d'ensemble, Carte, Validation, Structure) reste utilisable.
@@ -1147,12 +1107,12 @@ if fichiers_old and fichiers_new:
         [
             "📊 Vue d'ensemble",
             "🗺️ Carte",
-            "🔎 Validation",
-            "🔄 Structure",
+            "🔎 Validation de données",
+            "🔄 Structure de données",
             "➕➖ Entités",
-            "🔍 Modifications",
-            "📋 Données",
-            "📥 Export",
+            "🔍 Modifications de données",
+            "📋 Table attributaire",
+            "📥 Export de données",
         ]
     )
 
